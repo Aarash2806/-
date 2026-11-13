@@ -1,0 +1,24 @@
+[Event "Casual game"]
+[Site "Tehran"]
+[Date "2024.01.05"]
+[White "Ali"]
+[Black "Sara"]
+[Result "1-0"]
+
+1. e4 {The best by test} 1... e5 2. Nf3 (2. f4 {King's Gambit!} 2... exf4) 2... Nc6 3. Bb5 a6 $1 4. Ba4 Nf6 5. O-O 1-0
+
+[Event "Puzzle 1"]
+[FEN "r1bqkbnr/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4"]
+[SetUp "1"]
+[Result "*"]
+
+{Mate in one} 1. Qxf7# *
+
+[Event "Blitz Arena"]
+[White "Reza"]
+[Black "Nima"]
+[Result "1/2-1/2"]
+[ECO "C01"]
+
+1.e4 e6 2.d4 d5 3.Nc3 ; French Defence
+3... Nf6 4. Bg5 Be7 1/2-1/2

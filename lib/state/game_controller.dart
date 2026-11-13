@@ -1,6 +1,8 @@
 import 'package:dartchess/dartchess.dart';
 import 'package:flutter/foundation.dart';
 
+import '../services/pgn/pgn_parser.dart';
+
 /// One played move, remembering the position before it (for undo).
 class MoveRecord {
   final Position before;
@@ -24,6 +26,13 @@ class GameController extends ChangeNotifier {
   Side _startTurn = Side.white;
   Square? selected;
   bool flipped = false;
+
+  /// Label of the imported PGN game ("Ali — Sara · Tehran 2024"),
+  /// null while playing/moving manually on the board.
+  String? importedLabel;
+  /// Number of illegal moves that were skipped while importing the
+  /// current PGN game (0 for clean files).
+  int importedSkippedMoves = 0;
 
   Position get position => _position;
   List<MoveRecord> get records => List.unmodifiable(_records);
@@ -87,6 +96,8 @@ class GameController extends ChangeNotifier {
     _records.clear();
     _startTurn = Side.white;
     selected = null;
+    importedLabel = null;
+    importedSkippedMoves = 0;
     notifyListeners();
   }
 
@@ -98,6 +109,46 @@ class GameController extends ChangeNotifier {
     _records.clear();
     _startTurn = pos.turn;
     selected = null;
+    importedLabel = null;
+    importedSkippedMoves = 0;
+    notifyListeners();
+  }
+
+  /// Loads a PGN game (already validated by PgnDocument) onto the board:
+  /// replays its mainline move-by-move so the whole move list, undo and
+  /// engine analysis work exactly like a manually played game.
+  ///
+  /// Illegal moves inside the PGN (damaged files) were already skipped by
+  /// the parser; [ChessYarPgnGame.illegalMoves] reports how many.
+  void loadPgnGame(ChessYarPgnGame game) {
+    Position pos;
+    try {
+      pos = Chess.fromSetup(Setup.parseFen(game.startFen));
+    } catch (_) {
+      pos = _newChess();
+    }
+    _position = pos;
+    _records.clear();
+    _startTurn = pos.turn;
+    var skipped = game.illegalMoves;
+    for (final m in game.mainline) {
+      final mv = m.move;
+      if (mv is! NormalMove) {
+        skipped++; // drop moves (Crazyhouse) are not supported on the board
+        continue;
+      }
+      try {
+        final newPos = pos.play(mv);
+        _records.add(MoveRecord(pos, mv, m.san));
+        pos = newPos;
+      } catch (_) {
+        skipped++;
+      }
+    }
+    _position = pos;
+    selected = null;
+    importedLabel = game.label;
+    importedSkippedMoves = skipped;
     notifyListeners();
   }
 

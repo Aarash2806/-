@@ -63,9 +63,11 @@ function Install-Engine($name, $repo, $patterns, $exeHint) {
 }
 
 # Pattern lists are tried in order; first match wins.
-Install-Engine 'stockfish'  'official-stockfish/Stockfish' @('stockfish-windows-x86-64-avx2\.zip$', 'stockfish-windows-x86-64-sse41-popcnt\.zip$') 'stockfish'
-Install-Engine 'berserk'    'jhonnold/berserk'             @('windows.*x64.*\.zip$', 'windows.*\.zip$', 'win.*\.zip$') 'berserk'
-Install-Engine 'viridithas' 'cosmobobak/viridithas'        @('windows.*\.exe$', 'windows.*\.zip$') 'viridithas'
+# NOTE: SF 19+ ships `stockfish-windows-x86-64-universal.zip`; older tags
+# used avx2 / sse41-popcnt variants, kept as fallbacks.
+Install-Engine 'stockfish'  'official-stockfish/Stockfish' @('stockfish-windows-x86-64-universal\.zip$', 'stockfish-windows-x86-64-avx2\.zip$', 'stockfish-windows-x86-64-sse41-popcnt\.zip$') 'stockfish'
+Install-Engine 'berserk'    'jhonnold/berserk'             @('win.*x64.*\.zip$', 'win.*x86-64.*\.zip$', 'win.*\.zip$', 'windows.*\.zip$') 'berserk'
+Install-Engine 'viridithas' 'cosmobobak/viridithas'        @('win.*x86-64.*\.exe$', 'win-x86-64.*\.exe$', 'win.*\.exe$', 'win.*\.zip$') 'viridithas'
 
 Write-Host ""
 Write-Host "engines-bin contents:"

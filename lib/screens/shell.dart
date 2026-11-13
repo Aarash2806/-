@@ -114,7 +114,7 @@ class _ShellState extends State<Shell> {
           const Padding(
             padding: EdgeInsets.all(12),
             child: Text(
-              'نسخه 0.1.0 · Windows',
+              'نسخه 0.2.1 · Windows',
               textDirection: TextDirection.ltr,
               style: TextStyle(fontSize: 11, color: kTextDim),
             ),
